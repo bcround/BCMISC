@@ -1,13 +1,22 @@
 import { ChakraProvider } from '@chakra-ui/react';
+import { NextPage } from 'next';
 import type { AppProps } from 'next/app';
 import { RecoilRoot } from 'recoil';
 
-function MyApp({ Component, pageProps }: AppProps) {
+export type NextPageWithLayout = NextPage & {
+  getLayout?: (page: React.ReactElement) => React.ReactNode;
+};
+
+export type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout;
+};
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout = Component.getLayout ?? (page => page);
+
   return (
     <RecoilRoot>
-      <ChakraProvider>
-        <Component {...pageProps} />
-      </ChakraProvider>
+      <ChakraProvider>{getLayout(<Component {...pageProps} />)}</ChakraProvider>
     </RecoilRoot>
   );
 }
