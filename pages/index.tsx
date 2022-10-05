@@ -1,7 +1,13 @@
-import type { NextPage } from 'next';
+import { Heading, Highlight } from '@chakra-ui/react';
+import { DefaultLayout } from '@layouts/index';
+import { PerspectiveCamera } from '@react-three/drei';
+import { Canvas } from '@react-three/fiber';
 import Head from 'next/head';
+import { Suspense } from 'react';
+import { convertAngleToRadians } from 'src/utils';
+import { NextPageWithLayout } from './_app';
 
-const Home: NextPage = () => {
+const Home: NextPageWithLayout = () => {
   return (
     <>
       <Head>
@@ -10,9 +16,45 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div>hello bongchul</div>
+      <Heading
+        as="h1"
+        size="3xl"
+        textAlign="left"
+        color="white"
+        mt="50px"
+        w="450px"
+        lineHeight="1.2em"
+      >
+        <Highlight
+          query="Miscellaneous"
+          styles={{ px: '2', py: '1', rounded: 'full', bg: 'red.100' }}
+        >
+          Welcome to BC's Miscellaneous World!
+        </Highlight>
+      </Heading>
+
+      <Canvas style={{ height: '100vh !important' }}>
+        <Suspense fallback={<></>}>
+          <PerspectiveCamera makeDefault position={[0, 1, 5]} />
+
+          <mesh position={[0, 0.5, 0]}>
+            {/* args in here takes radius, widthSegments, heightSegments in order */}
+            <sphereGeometry args={[0.5, 64, 32]} />
+            <meshStandardMaterial color="hotpink" />
+          </mesh>
+
+          <mesh rotation={[-convertAngleToRadians(90), 0, 0]}>
+            <planeGeometry args={[7, 7]} />
+            <meshStandardMaterial color="#09bd0f" />
+          </mesh>
+
+          <ambientLight args={['#ffffff', 1]} />
+        </Suspense>
+      </Canvas>
     </>
   );
 };
+
+Home.getLayout = page => <DefaultLayout>{page}</DefaultLayout>;
 
 export default Home;
